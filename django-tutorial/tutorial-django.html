@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Windows (vers 1st November 2003), see www.w3.org" />
+  <meta http-equiv="content-type" content=
+  "application/xhtml+xml; charset=us-ascii" />
+
+  <title>Tutorial de Django</title>
+  <style type="text/css">
+  /*<![CDATA[*/
+  body {
+    margin: 20px;
+  }
+  h1, h2, h3, tt, code {
+    background-color: #DDFFDD;
+    padding: 2px;
+  }
+  a {
+    color: #009900;
+  }
+  p {
+    text-indent: 20px;
+  }
+  pre {
+    background-color: #DDFFDD;
+    padding: 2px;
+    border-style: solid;
+    border-width: 1px;
+  }
+  /*]]>
+
+  */
+  </style>
+</head>
+
+<body xml:lang="es" lang="es">
+  <h1 id="arriba">Tutorial de Django</h1>
+
+  <div class="toc">
+    <ul>
+      <li>
+        <a href="#Introducci">Introducci&oacute;n</a>
+
+        <ul>
+          <li><a href="#Requisitos">Requisitos</a></li>
+        </ul>
+      </li>
+
+      <li><a href="#ecosistema">El ecosistema de Django</a></li>
+
+      <li><a href="#Estructura">Estructura de (una
+      aplicaci&oacute;n) Django&nbsp;</a></li>
+
+      <li><a href="#Nuestra">Nuestra aplicaci&oacute;n web: Trivial
+      trivial</a></li>
+
+      <li><a href="#Creaci">Creaci&oacute;n del proyecto y la
+      aplicaci&oacute;n &nbsp;</a></li>
+
+      <li><a href="#Definiendo">Definiendo los modelos</a></li>
+
+      <li><a href="#Siguente">Siguente: implementando la
+      autentificaci&oacute;n</a></li>
+
+      <li><a href="#Formulario">Formulario de preguntas</a></li>
+
+      <li><a href="#Respondien">Respondiendo a la pregunta</a></li>
+
+      <li><a href="#Conclusion">Conclusiones</a></li>
+
+      <li><a href="#Notas">Notas</a></li>
+    </ul>
+  </div>
+
+  <h2 id="Introducci">Introducci&oacute;n</h2>
+
+  <p><a href="http://www.djangoproject.com/">Django</a> es un
+  "<a href="http://es.wikipedia.org/wiki/Framework">framework</a>"
+  para el desarrollo de aplicaciones Web basado en el lenguaje de
+  programaci&oacute;n <a href="http://www.python.org">Python</a> y
+  que sigue el patr&oacute;n de dise&ntilde;o <a href=
+  "http://es.wikipedia.org/wiki/MVC">MVC</a>. En los &uacute;ltimos
+  tiempos la palabra "framework" parece que se ha convertido en el
+  "Santo Grial" del desarrollo de aplicaciones Web.</p>
+
+  <p>Uno de los "framework" <sup>(<a href="#nota1">1</a>)</sup>
+  m&aacute;s famosos o populares que se ha dado a conocer ha sido
+  <a href="http://www.rubyonrails.org/">Ruby On Rails</a>.
+  &iquest;Qu&eacute; aporta esta herramienta frente a otras
+  alternativas m&aacute;s conocidas y establecidas?.</p>
+
+  <p>Lo m&aacute;s novedoso era la prevalencia de la
+  convenci&oacute;n frente a la configuraci&oacute;n. En vez de
+  andar editando ficheros .xml (como en las herramientas <a href=
+  "http://es.wikipedia.org/wiki/J2EE">J2EE</a>) se
+  establec&iacute;a una estructura de directorios est&aacute;ndar
+  para la aplicaci&oacute;n, no era necesario configurar mapeos,
+  plantillas, etc.</p>
+
+  <p>Rails tambi&eacute;n abstrae completamente la
+  interacci&oacute;n con bases de datos relacionales: el sistema es
+  capaz de "adivinar" los modelos e inferir los objetos que
+  intervienen en la aplicaci&oacute;n con s&oacute;lo examinar la
+  definici&oacute;n de tablas en el sistema relacional. Hay un
+  objeto, "ActiveRecord" que es el que relaciona o hace de puente
+  entre el sistema relacional y el sistema orientado a objetos.</p>
+
+  <p>Bas&aacute;ndose en algunas de las ideas de Rails y otras
+  propias han surgido bastantes herramientas de desarrollo de
+  aplicaciones web con una orientaci&oacute;n similar: poco
+  c&oacute;digo, reusable, etc.</p>
+
+  <p>En este art&iacute;culo presentaremos Django, que recoge
+  muchas de las ideas de Rails y aporta algunas soluciones propias.
+  Desarrollaremos una aplicaci&oacute;n viendo los problemas que
+  nos encontramos y c&oacute;mo los solucionamos. En casi todos los
+  tutoriales que hemos le&iacute;do, se presenta s&oacute;lo lo
+  m&aacute;s b&aacute;sico, pero a la hora de avanzar o tratar de
+  hacer algo m&aacute;s "real" nos encontramos con dificultades.
+  Este art&iacute;culo trata de paliar &eacute;sto.</p>
+
+  <h3 id="Requisitos">Requisitos</h3>
+
+  <p>Para seguir este tutorial es necesario conocer el lenguaje
+  Python, y haber le&iacute;do <a href=
+  "http://www.djangoproject.com/documentation/tutorial01/">el
+  tutorial de Django</a>. Por supuesto, asumimos que el lector sabe
+  HTML y tecnolog&iacute;as relacionadas (protocolo HTTP, CSS,
+  etc.)</p>
+
+  <h2 id="ecosistema">El ecosistema de Django</h2>
+
+  <p>Es bastante habitual en este mundillo de los "framework MVC -
+  que te cagas" <sup>(<a href="#nota2">2</a>)</sup> que haya una
+  (sana) competencia entre las distintas herramientas y lenguajes.
+  Podemos encontrar numerosas <a href=
+  "http://docs.google.com/View?docid=dcn8282p_1hg4sr9">comparativas</a>,
+  tutoriales, gu&iacute;as, etc, pero todo este (&uacute;til)
+  material s&oacute;lo rasca la superficie de lo que supone
+  trabajar con estas herramientas.</p>
+
+  <p>A veces da la impresi&oacute;n de que hay un concurso del tipo
+  <em>&iexcl;Con XXX monto una aplicaci&oacute;n del tipo YYY en
+  ZZZ minutos !</em> &oacute; <em>&iexcl;Mi framework lava
+  m&aacute;s blanco!</em>&nbsp;</p>
+
+  <p>No vamos a entrar en el juego. No hemos cronometrado lo que se
+  ha tardado en terminar el ejemplo que desarrollaremos en este
+  art&iacute;culo. Si contamos l&iacute;neas de c&oacute;digo del
+  ejemplo, se podr&iacute;a "picar" todo en apenas diez minutos,
+  pero no este tiempo es un dato real ni v&aacute;lido. Tampoco
+  vamos a decir que Django es mejor que otras herramientas (ni
+  siquiera lo tenemos claro), aunque s&iacute; que mencionaremos
+  qu&eacute; es lo que nos ha gustado y lo que no nos ha gustado
+  <sup>(<a href="#nota3">3</a>, <a href="#nota4">4</a>)</sup>.</p>
+
+  <p>Como bien es sabido, en el mundillo Python siempre hay mucho
+  donde elegir:&nbsp;&iquest;<a href=
+  "http://wiki.python.org/moin/GuiProgramming">Interfaces
+  gr&aacute;ficas</a>?&nbsp;&iquest;<a href=
+  "http://wiki.python.org/moin/WebServers">Servidores web</a>?
+  &iquest;<a href="http://wiki.python.org/moin/Templating">Sistemas
+  de plantillas</a>? &iquest;...?</p>
+
+  <p>Esto puede resultar confuso, puesto que antes de empezar a
+  desarrollar una aplicaci&oacute;n del tipo que sea hay que
+  documentarse bastante para elegir la herramienta adecuada. En
+  cuanto a los "<a href=
+  "http://wiki.python.org/moin/WebFrameworks">Web Frameworks</a>"
+  (otra vez la palabreja ;-) tambi&eacute;n hay bastantes
+  alternativas. Las m&aacute;s conocidas son <a href=
+  "http://www.djangoproject.com/">Django</a>, <a href=
+  "http://www.turbogears.org/">TurboGears</a> y <a href=
+  "http://pylonshq.com/">Pylons</a>.</p>
+
+  <p>Los programadores del lenguaje <a href=
+  "http://www.ruby-lang.org/">Ruby</a> no tienen que estrujarse
+  tanto la cabeza. La herramienta por antonomasia para desarrollo
+  web de Ruby es <a href="http://www.rubyonrails.org/">Ruby On
+  Rails</a>. No hay mucho m&aacute;s donde elegir. Esto tiene
+  ventajas (centralizaci&oacute;n de esfuerzos, uniformidad, ...) e
+  inconvenientes (menor flexibilidad, ...). Cada uno debe valorar
+  qu&eacute; es lo que prefiere.</p>
+
+  <p>Por &uacute;ltimo, un breve apunte sobre los lenguajes y sus
+  modismos. Ruby es un lenguaje con una filosof&iacute;a parecida a
+  Perl: <i>"hay m&aacute;s de una forma de hacerlo"</i>,
+  &nbsp;Python tiene una aproximaci&oacute;n diferente: <i>"hacer
+  las cosas de una s&oacute;la manera, la m&aacute;s sencilla"</i>.
+  De nuevo, aqu&iacute; intervienen las preferencias personales de
+  cada uno a la hora de programar. Django sigue bastante la
+  "<a href=
+  "http://www.python.org/doc/Humor.html#zen">filosof&iacute;a
+  pythonera</a>" y tratan de seguir una serie de <a href=
+  "http://www.djangoproject.com/documentation/design_philosophies/">
+  principios de dise&ntilde;o</a> (mejor expl&iacute;cito que
+  impl&iacute;cito, asumir que el desarrollador sabe lo que
+  est&aacute; haciendo, ...).</p>
+
+  <h2 id="Estructura">Estructura de (una aplicaci&oacute;n)
+  Django&nbsp;</h2>
+
+  <p>Django distingue entre proyectos y aplicaciones. Un proyecto
+  es un sitio web completo que constar de una o varias
+  aplicaciones. Estas aplicaciones las proporciona Django o las
+  escribe el desarrollador. El comando que crea un proyecto es
+  <code>django-admin.py</code>. No vamos a repetir lo que cuenta
+  <a href=
+  "http://www.djangoproject.com/documentation/tutorial01/">el
+  tutorial de Django</a>. Simplemente, con <code>django-admin.py
+  startproject miweb</code> se crea un directorio
+  <code>miweb</code> que contiene varios ficheros <code>.py</code>:
+  <code>__init__.py</code>, <code>manage.py</code>,
+  <code>settings.py</code> y <code>urls.py</code>.</p>
+
+  <ul>
+    <li><code>__init__.py</code>: Define nuestro directorio como un
+    m&oacute;dulo Python v&aacute;lido.</li>
+
+    <li><code>manage.py</code>: Utilidad para gestionar nuestro
+    proyecto: arrancar servidor de pruebas, sincronizar modelos,
+    etc.</li>
+
+    <li><code>settings.py</code>: Configuraci&oacute;n del
+    proyecto.</li>
+
+    <li><code>urls.py</code>: Gesti&oacute;n de las urls. Este
+    fichero ser&iacute;a el controlador de la aplicaci&oacute;n.
+    Mapea las url entrantes a funciones Python definidas en
+    m&oacute;dulos.</li>
+  </ul>
+
+  <p>Para crear una aplicaci&oacute;n nueva dentro del proyecto
+  ejecutamos <code>python manage.py startapp miaplicacion</code>.
+  Este comando crea el directorio <code>miaplicacion</code> y los
+  ficheros&nbsp;<code>__init__.py</code>, <code>views.py</code>, y
+  <code>models.py</code>.</p>
+
+  <ul>
+    <li><code>__init__.py</code>: Define nuestro directorio como un
+    m&oacute;dulo Python v&aacute;lido.</li>
+
+    <li><code>models.py</code>: Aqu&iacute; se definen los modelos
+    u objetos que ser&aacute;n mapeados a una base de datos
+    relacional.</li>
+
+    <li><code>views.py</code>: Define las funciones que van a
+    responder a las urls entrantes.</li>
+  </ul>Esto es un dise&ntilde;o MVC: modelo
+  (<code>models.py</code>), vista (<code>views.py</code>),
+  controlador(<code>urls.py</code>).
+
+  <h2 id="Nuestra">Nuestra aplicaci&oacute;n web: Trivial
+  trivial</h2>
+
+  <p>Vamos a desarrollar una aplicaci&oacute;n web un poco
+  m&aacute;s completa que la que proponen en el tutorial de Django.
+  Es un <a href=
+  "http://es.wikipedia.org/wiki/Trivial_Pursuit">Trivial</a>
+  multiusuario.</p>
+
+  <p>Especificaciones:</p>
+
+  <ul>
+    <li>Las preguntas y los usuarios los crea un
+    administrador.</li>
+
+    <li>Existen diferentes categor&iacute;as de preguntas.</li>
+
+    <li>Cada usuario tiene su propio juego (esto es, responde a sus
+    preguntas).</li>
+
+    <li>Es obligatorio estar validado en el sistema para
+    jugar.</li>
+  </ul>
+
+  <p>Como es una aplicaci&oacute;n de prueba, usaremos el servidor
+  de desarrollo que viene con Django. Los ficheros est&aacute;ticos
+  (CSS, im&aacute;genes, etc) tambi&eacute;n los servir&aacute;
+  Django, aunque esta pr&aacute;ctica est&aacute; <a href=
+  "http://www.djangoproject.com/documentation/static_files/">totalmente
+  desaconsejada</a> en un entorno de producci&oacute;n. Como
+  sistema relacional usaremos <a href=
+  "http://www.sqlite.org/"><b>sqlite</b></a> (hay un <a href=
+  "http://pysqlite.org/">"driver" para Python</a>).</p>
+
+  <p>Nos encontramos en este punto con un enfoque totalmente
+  diferente al de Rails: Django mantiene los modelos relacionales
+  (tablas, relaciones, ...) a partir del modelo que nosotros
+  definimos (en una clase), mientras que Rails "adivina" el modelo
+  a partir del esquema relacional. La ventaja del "enfoque Rails"
+  es que en cuanto que el modelo cambia, la herramienta detecta
+  estos cambios y se refleja autom&aacute;ticmente. El
+  inconveniente es que hay que seguir las convenciones Rails para
+  que &eacute;sto funcione.</p>
+
+  <p>Personalmente, preferimos el planteamiento de Django: el
+  desarrollador define modelos, la herramienta se encarga de
+  traducir estos modelos a SQL, pero hay un inconveniente: si los
+  modelos cambian, hay que hacer el cambio manualmente en el
+  esquema del sistema relacional. Parece que en posteriores
+  versiones de Django tratar&aacute;n de implementar esta mejora,
+  pero a d&iacute;a de hoy (Django versi&oacute;n 0.96), no es
+  as&iacute;.</p>
+
+  <p>Tras esta breve disquisici&oacute;n, pasemos a definir los
+  modelos. Encontramos las siguientes entidades:</p>
+
+  <ul>
+    <li>Usuario, caracterizado por un nombre, "login",
+    contrase&ntilde;a, ...</li>
+
+    <li>Categor&iacute;a</li>
+
+    <li>Pregunta, con un t&iacute;tulo, conjunto de respuestas
+    posibles, respuesta correcta, un gr&aacute;fico asociado,
+    ...&nbsp;<sup>(<a href="#nota5">5</a>)</sup></li>
+
+    <li>Respuesta, asociada a un usuario concreto y una pregunta
+    concreta, guardando el resultado (acierto/fallo), etc.</li>
+  </ul>
+
+  <p><img alt="" src="ER.png" height="273" width="484" /></p>
+
+  <h2 id="Creaci">Creaci&oacute;n del proyecto y la
+  aplicaci&oacute;n &nbsp;</h2>
+
+  <p>Lo primero es crear el proyecto: <code>django-admin.py
+  startproject Trivial</code></p>
+
+  <p>Ajustamos algunos par&aacute;metros en
+  <code>settings.py</code> y <code>urls.py</code>. Habilitaremos la
+  interfaz administrativa (<a href="#nota6"><sup>6</sup></a>), el
+  directorio desde el que se sirven los contenidos est&aacute;ticos
+  y algunos ajustes m&aacute;s.</p>
+
+  <p><code>settings.py</code> (extracto):</p>
+  <pre>
+MEDIA_ROOT = '/home/david/desarrollo/Trivial/site_media/'
+MEDIA_URL = 'http://localhost:8000/site_media/'
+ADMIN_MEDIA_PREFIX = '/media/'
+INSTALLED_APPS = (
+ 'django.contrib.auth',
+ 'django.contrib.contenttypes',
+ 'django.contrib.sessions',
+ 'django.contrib.sites',
+ 'django.contrib.admin', 
+ 'Trivial.juego',
+)
+</pre>
+
+  <p><code>urls.py</code> (extracto):</p>
+  <pre>
+from settings import MEDIA_ROOT
+urlpatterns = patterns('',
+ (r'^admin/', include('django.contrib.admin.urls')),
+)
+urlpatterns += patterns('django.views',
+ (r'^site_media/(.*)$', 'static.serve', {'document_root': MEDIA_ROOT}),
+) 
+</pre>
+
+  <p>Cuando queramos pasar a producci&oacute;n, s&oacute;lo
+  tendremos que eliminar la &uacute;ltima entrada en
+  <code>urls.py</code> y editar <code>MEDIA_URL</code> en
+  <code>settings.py</code>.</p>
+
+  <p>Tambi&eacute;n tenemos que crear la base de datos sqlite
+  (comando <code>sqlite data/datos.db</code>).</p>
+
+  <p>Ahora, desde el directorio Trivial (directorio ra&iacute;z)
+  creamos la aplicaci&oacute;n propiamente dicha (juego):
+  <code>python manage.py startapp juego</code>.</p>
+
+  <h2 id="Definiendo">Definiendo los modelos</h2>
+
+  <p>Editamos el fichero <code>juego/models.py</code> para definir
+  nuestros objetos. Las clases que representan modelos deben
+  heredar de la clase Model y siguen una sintaxis muy sencilla e
+  intuitiva.</p>
+
+  <p>Django incorpora en el paquete
+  <code>django.contrib.auth</code> todo un sistema de
+  autentificaci&oacute;n y gesti&oacute;n de usuarios, as&iacute;
+  que no vamos a reinventar la rueda y utilizaremos este sistema
+  (<a href="#nota7"><sup>7</sup></a>).</p>
+
+  <p>Estos son nuestros modelos:</p>
+  <pre>
+from django.db import models
+from django.contrib.auth.models import User
+
+class Usuario(User):
+    def __str__(self):
+        return self.username
+    
+    class Admin:
+        pass
+
+class Categoria(models.Model):
+    nombre = models.CharField("Categor&iacute;a", maxlength=200)
+    
+    def __str__(self):
+        return self.nombre
+    
+    class Admin:
+        pass
+        
+        
+class Pregunta(models.Model):
+    categoria = models.ForeignKey(Categoria, verbose_name="Categor&iacute;a la que pertenece")
+    titulo = models.CharField("T&iacute;tulo", maxlength=200)
+    texto = models.TextField("Texto de la pregunta")
+    respuesta_1 = models.CharField(maxlength=200)
+    respuesta_2 = models.CharField(maxlength=200)
+    respuesta_3 = models.CharField(maxlength=200)
+    respuesta_4 = models.CharField(maxlength=200)
+    respuesta_correcta = models.CharField(maxlength=200)
+    foto = models.CharField(maxlength=200)
+    
+    def __str__(self):
+        return self.titulo
+        
+    class Admin:
+        pass
+    
+
+class Respuesta(models.Model):
+    tiempo = models.IntegerField("Tiempo en segs.")
+    resultado = models.IntegerField("0 -&gt; incorrecto, 1 -&gt; correcto")
+    pregunta = models.ForeignKey(Pregunta, verbose_name="Pregunta que se responde")
+    usuario = models.ForeignKey(User, verbose_name="Usuario que responde")
+    
+    def __str__(self):
+        return str(self.pregunta) + " (Usuario: " + str(self.usuario) + ")"
+     
+    class Admin:
+        pass
+</pre>
+
+  <p>Como dec&iacute;amos antes, <i>"mejor expl&iacute;cito que
+  impl&iacute;cito"</i>. Definimos un m&eacute;todo
+  <code>__str__</code> en todas las clases para tener una
+  descripci&oacute;n "humana" de cada objeto, tanto a la hora de
+  desarrollar como de gestionar en la interfaz administrativa. La
+  clase anidada <code>Admin</code> sirve para que la clase madre
+  aparezca en la interfaz administrativa.</p>
+
+  <p>La clase <b>Usuario</b> hereda directamente de la clase
+  <b>User</b> de Django
+  (<i>django.contrib.auth.models.User</i>).</p>
+
+  <p>Por &uacute;ltimo, haremos que Django sincronice la
+  informaci&oacute;n que tiene de los modelos con el sistema
+  relacional (vamos, que cree las tablas necesarias): <code>python
+  manage.py syncdb</code> Este comando tambi&eacute;n crear&aacute;
+  las tablas necesarias para la aplicaci&oacute;n administrativa y
+  el sistema de gesti&oacute;n de usuarios (de hecho nos
+  pedir&aacute; los datos necesarios para crear un "superusuario").
+  Si arrancamos el servidor y apuntamos nuestro navegador a
+  <code>http://localhost:8000/admin/</code> veremos en marcha la
+  interfaz de administraci&oacute;n:</p>
+
+  <p><img alt="" src="admin1.png" /></p>
+
+  <p>Lo primero que hemos hecho ha sido crear un grupo
+  (Concursantes) y asignarle el permiso de "crear objetos del tipo
+  Respuesta". Despu&eacute;s creamos unos cuantos usuarios y les
+  hacemos miembros del grupo. Ya tenemos un sistema de control de
+  acceso, permisos bastante granulares (estos usuarios s&oacute;lo
+  podr&aacute;n crear objetos del tipo Respuesta, pero no
+  modificarlos o borrarlos) sin escribir nada de c&oacute;digo.</p>
+
+  <h2 id="Siguente">Siguente: implementando la
+  autentificaci&oacute;n</h2>
+
+  <p>El siguiente paso es relativamente sencillo si utilizamos las
+  facilidades que Django nos proporciona. El <a href=
+  "http://www.python.org/dev/peps/pep-0318/">decorador</a>
+  <code>@login_required</code> en el paquete
+  <b>django.contrib.auth.decorators</b> funciona de la <a href=
+  "http://www.djangoproject.com/documentation/authentication/#the-permission-required-decorator">
+  siguiente</a> <a href=
+  "http://www.djangobook.com/en/beta/chapter12/">manera</a>: si el
+  usuario no est&aacute; autentificado, redirige a una plantilla o
+  <i>template</i> de validaci&oacute;n (registration/login.html por
+  defecto):</p>
+
+  <p><img alt="Acceso" src="login.png" /></p>
+
+  <p>Si est&aacute; autentificado, la funci&oacute;n "decorada"
+  (<code>index</code> en este caso) se ejecuta normalmente.</p>
+
+  <p>La primera pantalla que queremos que el usuario autenfificado
+  vea es un listado de preguntas clasificado por categor&iacute;as.
+  &Eacute;ste ser&iacute;a nuestro "index.html", pero, como hemos
+  dicho, queremos que el usuario se valide antes. Veamos
+  c&oacute;mo hacerlo.</p>
+
+  <p>En <code>urls.py</code> a&ntilde;adimos una entrada para
+  "mapear" la direcci&oacute;n "<b>/</b>" (ra&iacute;z del sitio) a
+  la funci&oacute;n "<code>index</code>" en
+  <code>views.py</code>:</p>
+
+  <p><code>urls.py</code> (extracto):</p>
+  <pre>
+from settings import MEDIA_ROOT
+urlpatterns = patterns('',
+ <strong>(r'^/?$', 'Trivial.juego.views.index'),</strong>
+ (r'^admin/', include('django.contrib.admin.urls')),
+)
+urlpatterns += patterns('django.views',
+ (r'^site_media/(.*)$', 'static.serve', {'document_root': MEDIA_ROOT}),
+) 
+</pre>
+
+  <p>Y nuestra funci&oacute;n (<a href="#nota8"><sup>8</sup></a>)
+  en <code>views.py</code> ser&iacute;a algo as&iacute;:</p>
+  <pre>
+@login_required
+def index(request):
+    categorias = Categoria.objects.all()
+    preguntas = Pregunta.objects.all()
+    respuestas = Respuesta.objects.filter(usuario=request.user)
+    return render_to_response('index.html', 
+                                {'categorias': categorias,
+                                 'preguntas': preguntas,
+                                 'respuestas': respuestas,
+                                 'usuario': request.user,}
+                                )
+</pre>
+
+  <p>&iquest;Qu&eacute; hace este <code>index</code>? Recoge todas
+  las categor&iacute;as, preguntas y respuestas del usuario
+  validado y se las "pasa" a una plantilla o <i>template</i>
+  llamada "<code>index.html</code>". Tambi&eacute;n le pasa los
+  datos del usuario (<i>request.user</i>). Como hemos especificado
+  que hay un login previo, podemos estar seguros de que esta
+  variable "usuario" tiene datos correctos.</p>
+
+  <p>Veamos ahora la plantilla o <i>template</i>
+  <code>index.html</code>, no sin antes repasar <a href=
+  "http://www.djangoproject.com/documentation/templates/">c&oacute;mo
+  funcionan los templates</a> en Django:</p>
+  <pre>
+{% extends "base.html" %}
+
+{% block cuerpo %}
+
+&lt;strong&gt;Listado de preguntas&lt;/strong&gt;
+{% if categorias %}
+    {% regroup preguntas by categoria as agrupado %}
+    &lt;ul&gt;
+    {% for grupo in agrupado %}
+        &lt;li&gt;{{ grupo.grouper }}&lt;/li&gt;
+        &lt;ul&gt;
+        {% for item in grupo.list %}
+                &lt;li&gt;&lt;a href="pregunta/{{item.id}}/"&gt;{{ item.titulo }}&lt;/a&gt;&lt;br&gt;
+                {% for r in respuestas %}
+                    {% ifequal item r.pregunta %}
+                            &amp;nbsp;&amp;nbsp;La pregunta ya ha sido respondida.
+                    {% endifequal %}
+                {% endfor %}
+                &lt;/li&gt;
+        {% endfor %}
+        &lt;/ul&gt;
+    {% endfor %}
+    &lt;/ul&gt;
+{% else %}
+    &lt;p&gt;No hay categor&iacute;as&lt;/p&gt;
+{% endif %}
+
+&lt;p&gt;&lt;a href="/accounts/logout/"&gt;Desconectar&lt;/a&gt;&lt;/p&gt;
+
+{% endblock %}
+</pre>
+
+  <p>En este <i>template</i> comprobamos si hay categor&iacute;as
+  <code>{% if categorias %}</code> y mostramos en forma de listas
+  anidadas todas las preguntas de cada categor&iacute;a con la
+  etiqueta <code>{% regroup preguntas by categoria as agrupado
+  %}</code> y lo que sigue. Para cada pregunta comprobamos si tiene
+  una respuesta asociada:</p>
+  <pre>
+{% for r in respuestas %}
+ {% ifequal item r.pregunta %}
+   &amp;nbsp;&amp;nbsp;La pregunta ya ha sido respondida.
+ {% endifequal %}
+{% endfor %}
+</pre>
+
+  <p>Esta comprobaci&oacute;n es algo ineficiente (en cada pregunta
+  itera sobre todas las respuestas) pero no lo hemos refinado por
+  mantener la simplicidad. Seguro que se puede hacer mejor ;-)</p>
+
+  <p>En este template tambi&eacute;n estamos utilizando una
+  caracter&iacute;stica muy &uacute;til: la herencia de plantillas.
+  En una plantilla aparte (<code>base.html</code>) definimos un
+  esqueleto con unos bloques de contenido que cada una de las
+  plantillas "hijas" se encarga de completar con <code>{% block
+  loquesea %}</code></p>
+
+  <p>As&iacute; quedar&iacute;a nuestra pantalla inicial:</p>
+
+  <p><img alt="Index" src="pantalla-index.png" /></p>
+
+  <h2 id="Formulario">Formulario de preguntas</h2>
+
+  <p>Cuando el usuario sigue el enlace (<code>&lt;a
+  href="pregunta/{{item.id}}/"&gt;{{ item.titulo
+  }}&lt;/a&gt;</code>) que presenta cada pregunta en la plantilla
+  <code>index.html</code> se le dirige a la p&aacute;gina que
+  llamaremos "ficha de pregunta". Estas son las modificaciones que
+  hemos introducido:</p>
+
+  <p><code>urls.py</code> (extracto):</p>
+  <pre>
+urlpatterns = patterns('',
+ (r'^/?$', 'Trivial.juego.views.index'),
+ <b>(r'^pregunta/(\d+)/$', 'Trivial.juego.views.pregunta'),</b>
+ (r'^admin/', include('django.contrib.admin.urls')),
+)
+</pre>
+
+  <p>En <code>views.py</code> definimos la funci&oacute;n
+  "pregunta":</p>
+  <pre>
+from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
+from Trivial.juego.models import Pregunta, Respuesta
+@login_required
+def pregunta(request, id):
+    pregunta = Pregunta.objects.get(id=id)
+    try:
+        respuesta = Respuesta.objects.get(pregunta=id, usuario=request.user)
+    except ObjectDoesNotExist:
+        respuesta = None
+    return render_to_response('pregunta.html', 
+                                {'pregunta': pregunta,
+                                 'respuesta': respuesta,
+                                 'tiempo': str(int(time.time())),
+                                }
+                              )
+</pre>
+
+  <p>A la funci&oacute;n <code>pregunta</code> le llegan dos
+  argumentos: <code>request</code> e <code>id</code>, tal y como se
+  define en <code>urls.py</code>. Lo primero que hacemos es buscar
+  la pregunta correspondiente (<code>pregunta =
+  Pregunta.objects.get(id=id)</code>) y luego buscamos la posible
+  respuesta que haya podido hacer el usuario en una anterior visita
+  (<code>respuesta = Respuesta.objects.get(pregunta=id,
+  usuario=request.user)</code>). Si no hay respuestas capturamos la
+  excepci&oacute;n, asignamos None a la respuesta y seguimos.</p>
+
+  <p>Finalmente, &eacute;sta es la plantilla que muestra los datos
+  de una pregunta, <code>pregunta.html</code>:</p>
+  <pre>
+{% extends "base.html" %}
+
+{% block cuerpo %}
+
+    &lt;h2&gt;Categor&iacute;a: {{ pregunta.categoria }}&lt;/h2&gt;
+    &lt;h3&gt;{{ pregunta.titulo }}&lt;/h3&gt;
+
+    {% if texto_error %}
+        &lt;p class="error"&gt;{{ texto_error }}&lt;/p&gt;
+    {% endif %}
+
+    &lt;img class="foto" src="/site_media/{{ pregunta.foto }}"&gt;
+
+    &lt;p&gt;{{ pregunta.texto }}&lt;/p&gt;
+
+    {% if respuesta %}
+        &lt;p&gt;Ya has respondido antes a la pregunta.&lt;/p&gt;
+        &lt;p&gt;Tiempo empleado: {{ respuesta.tiempo }} segundos.&lt;/p&gt;
+        &lt;p&gt;El resultado fue 
+            {% if respuesta.resultado %}
+                CORRECTO
+            {% else %}
+                INCORRECTO
+            {% endif %}
+        &lt;/p&gt;
+    {% else %}
+        &lt;form method="post" action="/responder/"&gt;
+            &lt;input type="hidden" name="pregunta" value="{{ pregunta.id }}"&gt;
+            &lt;input type="hidden" name="tiempo" value="{{ tiempo }}"&gt;
+            &lt;input type="radio" value="{{ pregunta.respuesta_1 }}" 
+                    name="respuesta"&gt;{{ pregunta.respuesta_1 }}&lt;br&gt;
+            &lt;input type="radio" value="{{ pregunta.respuesta_2 }}" 
+                    name="respuesta"&gt;{{ pregunta.respuesta_2 }}&lt;br&gt;
+            &lt;input type="radio" value="{{ pregunta.respuesta_3 }}" 
+                    name="respuesta"&gt;{{ pregunta.respuesta_3 }}&lt;br&gt;
+            &lt;input type="radio" value="{{ pregunta.respuesta_4 }}" 
+                    name="respuesta"&gt;{{ pregunta.respuesta_4 }}&lt;br&gt;
+            &lt;br&gt;
+            &lt;input type="submit" value="Responder"&gt;
+        &lt;/form&gt;
+    {% endif %}
+
+{% endblock %}
+</pre>
+
+  <p>Nos encontramos en esta plantilla con una variable
+  (<code>texto_error</code>) que no hemos asignado desde la
+  funci&oacute;n <code>pregunta</code>. Esta variable puede tener
+  un valor cuando esta plantilla es invocada desde otra
+  funci&oacute;n definida en <code>views.py</code>
+  (<code>respuesta</code>). Lo veremos un poco m&aacute;s
+  adelante.</p>
+
+  <p>Lo primero que comprobamos es si esta pregunta ya ha sido
+  respondida. Si es as&iacute;, la variable respuesta tendr&aacute;
+  un valor distinto a None. En este caso informamos al usuario del
+  resultado y el tiempo empleado en resolver la pregunta.</p>
+
+  <p><img alt="Respondida" src="pregunta-respondida.png" /></p>
+
+  <p>Si no hay respuesta, generamos un formulario con las posibles
+  respuestas y dos campos ocultos con el id de la pregunta y una
+  marca de tiempo. El formulario apunta a la url
+  <code>/responder/</code>, ahora veremos c&oacute;mo lo
+  tratamos.</p>
+
+  <p><img alt="No respondida" src=
+  "pregunta-no-respondida.png" /></p>
+
+  <h2 id="Respondien">Respondiendo a la pregunta</h2>
+
+  <p>De nuevo, a&ntilde;adimos una regla al fichero
+  <code>urls.py</code> para procesar las respuestas de los
+  usuarios. El fichero quedar&iacute;a as&iacute; (versi&oacute;n
+  final):</p>
+  <pre>
+from django.contrib.auth.views import login, logout
+from django.conf.urls.defaults import *
+from settings import MEDIA_ROOT
+
+urlpatterns = patterns('',
+ (r'^/?$', 'Trivial.juego.views.index'),
+ (r'^pregunta/(\d+)/$', 'Trivial.juego.views.pregunta'),
+ <strong>(r'^responder/$', 'Trivial.juego.views.respuesta'),</strong>
+ (r'^accounts/login/$', login),
+ (r'^accounts/logout/$', logout, {'template_name': 'registration/logout.html' }),
+ (r'^admin/', include('django.contrib.admin.urls')),
+)
+urlpatterns += patterns('django.views',
+ (r'^site_media/(.*)$', 'static.serve', {'document_root': MEDIA_ROOT}),
+) 
+</pre>
+
+  <p>La funci&oacute;n nueva (respuesta) se define en
+  <code>views.py</code> y es as&iacute;:</p>
+  <pre>
+@login_required
+def respuesta(request):
+    pregunta = Pregunta.objects.get(id=request.POST['pregunta'])
+    if not request.POST.has_key('respuesta') or request.POST['respuesta'] == "":
+        texto_error = "Debe elegir una opci&oacute;n" 
+        return render_to_response('pregunta.html', 
+                                {'pregunta': pregunta,
+                                 'texto_error': texto_error,
+                                  'tiempo': str(int(time.time())),
+                                }
+                              )
+    else:
+        opcion = request.POST['respuesta'];
+        respuesta = Respuesta()
+        respuesta.pregunta = pregunta
+        respuesta.usuario = request.user
+        respuesta.tiempo = int(time.time()) - int(request.POST['tiempo'])
+        if pregunta.respuesta_correcta == opcion:
+            respuesta.resultado = 1
+        else:
+            respuesta.resultado = 0
+        respuesta.save()
+        return render_to_response('respuesta.html', 
+                                {'pregunta': pregunta,
+                                 'respuesta': respuesta,
+                                 'opcion': opcion,
+                                }
+                              )
+</pre>
+
+  <p>Primero localizamos la pregunta (nos llega el <code>id</code>
+  en la variable POST '<code>pregunta</code>'). Despu&eacute;s
+  comprobamos que han pulsado uno de los "radiobutton" de respuesta
+  (<code>request.POST['respuesta']</code>). Si no han respondido,
+  redirigimos de nuevo a la p&aacute;gina de pregunta pasando un
+  mensaje de error.</p>
+
+  <p><img alt="Respondiendo" src="respondiendo.png" /></p>
+
+  <p>Si han respondido, creamos un objeto Respuesta asociado a la
+  pregunta y al usuario. Tambi&eacute;n asignamos a esta respuesta
+  el tiempo que se ha tardado en resolver la pregunta y el
+  resultado. Despu&eacute;s, redirigimos a la plantilla
+  <code>'respuesta.html'</code> pasando el objeto pregunta, el
+  objeto respuesta reci&eacute;n creado y la opci&oacute;n que
+  hab&iacute;an seleccionado.</p>
+
+  <p><code>respuesta.html</code>:</p>
+  <pre>
+{% extends "base.html" %}
+
+{% block cuerpo %}
+
+&lt;h2&gt;Resultado de la pregunta&lt;/h2&gt;
+&lt;h3&gt;{{ pregunta.titulo }}&lt;/h3&gt;
+&lt;img class="foto" src="/site_media/{{ pregunta.foto }}"&gt;
+
+&lt;p&gt;{{ pregunta.texto }}&lt;/p&gt;
+&lt;p&gt;Respuesta seleccionada: {{ opcion }}&lt;/p&gt;
+&lt;p&gt;Respuesta correcta: {{ pregunta.respuesta_correcta }}&lt;/p&gt;
+{% if respuesta.resultado %}
+&lt;p&gt;&Acirc;&iexcl;Enhorabuena!&lt;/p&gt;
+{% else %}
+&lt;p&gt;&Acirc;&iexcl;Has fallado!&lt;/p&gt;
+{% endif %}
+&lt;p&gt;Tiempo empleado: {{ respuesta.tiempo }} segundos.&lt;/p&gt;
+{% endblock %}
+</pre>
+
+  <p>Sencillo, simplemente mostramos los datos del objeto
+  respuesta, la pregunta asociada y lo que el usuario
+  respondi&oacute;.</p>
+
+  <p><img alt="Resultado" src="resultado.png" /></p>
+
+  <h2 id="Conclusion">Conclusiones</h2>
+
+  <ul>
+    <li>Hemos hecho una aplicaci&oacute;n web muy b&aacute;sica y
+    sencilla, pero demuestra que muchas tareas complicadas y/o
+    tediosas de implementar nos la proporciona la herramienta
+    <strong>Django</strong>. La interfaz administrativa y el
+    sistema de autentificaci&oacute;n nos han salido "gratis".
+    Probablemente, la implementaci&oacute;n de estas dos
+    funcionalidades nos hubiesen llevado bastante tiempo.</li>
+
+    <li>Observamos tambi&eacute;n la extrema sencillez en el
+    desarrollo: con cuatro elementos con unas funciones muy
+    concretas (urls, modelos, vistas y plantillas) tenemos
+    perfectamente separadas la l&oacute;gica, los datos y la
+    presentaci&oacute;n. Comp&aacute;rese esta simplicidad con la
+    t&iacute;pica aplicaci&oacute;n J2EE, por sencilla que sea. No
+    hay color. Que las soluciones basadas en J2EE sean m&aacute;s
+    "potentes", escalables, robustas, etc. no lo voy a negar. Pero,
+    &iquest;acaso se necesita siempre esa "potencia"?.</li>
+
+    <li>No hemos desarrollado una aplicaci&oacute;n similar con
+    Rails, por lo que no ser&iacute;a muy justo decir que Django es
+    m&aacute;s f&aacute;cil o mejor. Lo que si que podemos decir,
+    por lo que hemos visto y le&iacute;do es que Django aporta
+    varias caracter&iacute;sticas que ahorran mucho trabajo, en
+    este caso la interfaz administrativa y el sistema de
+    autentificaci&oacute;n (<sup><a href=
+    "#nota9">9</a></sup>).</li>
+  </ul>
+  <hr size="2" width="100%" />
+
+  <h2 id="Notas">Notas</h2>
+
+  <ol>
+    <li id="nota1">Estoy un poco cansado de la palabra "framework".
+    A partir de ahora y en lo que queda de tutorial voy a emplear
+    el t&eacute;rmino "herramienta", aunque no sea el m&aacute;s
+    adecuado ;-)</li>
+
+    <li id="nota2">Disculpen el lenguaje soez, a veces se me escapa
+    alguna palabrota ;-)</li>
+
+    <li id="nota3">La documentaci&oacute;n que he utilizado son
+    estas dos fuentes: la <a href=
+    "http://www.djangoproject.com/documentation/">documentaci&oacute;n
+    de Django</a> y el libro "<a href=
+    "http://www.djangobook.com/">The Django Book</a>".</li>
+
+    <li id="nota4">Una de las cosas que m&aacute;s me ha gustado de
+    Django es la documentaci&oacute;n: completa, accesible y, sobre
+    todo, <b>centralizada</b>. Me gusta mucho m&aacute;s que, por
+    ejemplo, la <a href=
+    "http://www.rubyonrails.org/docs">documentaci&oacute;n de
+    Rails</a>: tutoriales dispersos por internet, falta de un
+    &iacute;ndice por t&oacute;picos, ... No voy a ser malpensado,
+    pero da la impresi&oacute;n que lo que quieren es que compres
+    el <a href=
+    "http://www.pragmaticprogrammer.com/titles/rails/index.html">libro</a>
+    que ha escrito el autor de Rails.</li>
+
+    <li id="nota5">No voy a ser muy estricto con cuestiones de
+    normalizaci&oacute;n del dise&ntilde;o de la base de datos.
+    Probablemente ser&iacute;a mejor tener una tabla aparte para
+    las posibles respuestas con una clave apuntando a la pregunta.
+    Mantendremos este dise&ntilde;o (incorrecto) por
+    sencillez.</li>
+
+    <li id="nota6">Es una aplicaci&oacute;n web muy bien terminda y
+    personalizable, nada que ver con el "scaffold" b&aacute;sico
+    que nos puede proporcionar Ruby On Rails. Si una
+    aplicaci&oacute;n requiere una interfaz administrativa para
+    manejar los distintos objetos en Rails hay que programarla.
+    Django nos la da ya hecha.</li>
+
+    <li id="nota7">Rails por defecto no tiene nada similar, aunque
+    existe un "plugin" para Rails que implementa un sistema de
+    autentificaci&oacute;n. No lo he utilizado, as&iacute; que no
+    puedo valorarlo.</li>
+
+    <li id="nota8">Funci&oacute;n, no m&eacute;todo.
+    Intencionadamente, los dise&ntilde;adores de Django han
+    decidido que no hay necesidad de lidiar con objetos para
+    atender a una simple petici&oacute;n.</li>
+
+    <li id="nota9">Rails tambi&eacute;n proporciona un
+    mont&oacute;n de funciones, atajos y utilidades que ahorran
+    tiempo (la primera que se me viene a la cabeza es la
+    maravillosa <a href=
+    "http://api.rubyonrails.com/classes/ActionView/Helpers/FormOptionsHelper.html">
+    options_from_collection_for_select</a>).</li>
+
+    <li>Rollo legal: este es un documento de libre difusi&oacute;n
+    (licencia Creative Commons "by-nc-sa") con algunas
+    limitaciones. Leer el <a href=
+    "http://creativecommons.org/licenses/by-nc-sa/3.0/deed.es">texto
+    de la licencia completo</a> para m&aacute;s detalles.</li>
+  </ol>
+
+  <p><a href="#arriba">Subir</a></p>
+
+  <p style="text-align: center;">(cc) David Asorey
+  &Aacute;lvarez<br />
+  Abril de 2007<br />
+  <a href=
+  "mailto:David.Asorey.Alvarez@gmail.com">David.Asorey.Alvarez@gmail.com</a></p>
+</body>
+</html>
